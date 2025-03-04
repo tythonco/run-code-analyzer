@@ -37,6 +37,8 @@ The `forcedotcom/run-code-analyzer@v2` GitHub Action is based on [Salesforce Cod
   * The number of Low (4) severity violations found.
 * `num-sev5-violations`
   * The number of Info (5) severity violations found.
+* `summary-markdown`
+  * Summary table in markdown format of violations found.
 
 This `run-code-analyzer@v2` action won't exit your GitHub workflow when it finds violations. We recommend that you add a subsequent step to your workflow that uses the available outputs to determine how your workflow should proceed.
 
@@ -52,7 +54,9 @@ The [Salesforce Code Analyzer v5.x (Beta)](https://developer.salesforce.com/docs
 ## Example v2 Usage
 
     name: Salesforce Code Analyzer Workflow
-    on: push
+    on:
+      pull_request:
+        types: [opened]
     jobs:
       salesforce-code-analyzer-workflow:
         runs-on: ubuntu-latest
@@ -88,6 +92,18 @@ The [Salesforce Code Analyzer v5.x (Beta)](https://developer.salesforce.com/docs
               run-arguments: --workspace . --view detail --output-file sfca_results.html --output-file sfca_results.json
               results-artifact-name: salesforce-code-analyzer-results
     
+          - name: Upload Salesforce Code Analyzer results as PR comment
+            uses: actions/github-script@v7
+            with:
+              github-token: ${{ secrets.GITHUB_TOKEN }}
+              script: |
+                github.rest.issues.createComment({
+                  issue_number: '${{ github.event.number }}',
+                  owner: '${{ github.event.repository.owner.login }}',
+                  repo: '${{ github.event.repository.name }}',
+                  body: `${{ steps.run-code-analyzer.outputs.summary-markdown }}`
+                });
+
           - name: Check the outputs to determine whether to fail
             if: |
               steps.run-code-analyzer.outputs.exit-code > 0 ||

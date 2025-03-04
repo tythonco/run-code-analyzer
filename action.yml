@@ -43,6 +43,8 @@ outputs:
     description: The number of Low (4) severity violations found.
   num-sev5-violations:
     description: The number of Info (5) severity violations found.
+  summary-markdown:
+    description: Summary table in markdown format of violations found.
 
 runs:
   using: node20

@@ -67,6 +67,12 @@ export async function run(
         dependencies.setOutput('num-sev3-violations', results.getSev3ViolationCount().toString())
         dependencies.setOutput('num-sev4-violations', results.getSev4ViolationCount().toString())
         dependencies.setOutput('num-sev5-violations', results.getSev5ViolationCount().toString())
+        dependencies.endGroup()
+
+        dependencies.startGroup(MESSAGES.STEP_LABELS.CREATING_SUMMARY)
+        const summaryMarkdown: string = summarizer.createSummaryMarkdown(results)
+        dependencies.setOutput('summary-markdown', summaryMarkdown)
+        await dependencies.writeSummary(summaryMarkdown)
         dependencies.info(
             `outputs:\n` +
                 `  exit-code: ${codeAnalyzerOutput.exitCode}\n` +
@@ -75,13 +81,9 @@ export async function run(
                 `  num-sev2-violations: ${results.getSev2ViolationCount()}\n` +
                 `  num-sev3-violations: ${results.getSev3ViolationCount()}\n` +
                 `  num-sev4-violations: ${results.getSev4ViolationCount()}\n` +
-                `  num-sev5-violations: ${results.getSev5ViolationCount()}`
+                `  num-sev5-violations: ${results.getSev5ViolationCount()}\n` +
+                `  summary-markdown: ${summaryMarkdown}`
         )
-        dependencies.endGroup()
-
-        dependencies.startGroup(MESSAGES.STEP_LABELS.CREATING_SUMMARY)
-        const summaryMarkdown: string = summarizer.createSummaryMarkdown(results)
-        await dependencies.writeSummary(summaryMarkdown)
         dependencies.endGroup()
     } catch (error) {
         if (error instanceof Error) {

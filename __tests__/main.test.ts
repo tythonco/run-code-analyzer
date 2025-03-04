@@ -37,7 +37,7 @@ describe('main run Tests', () => {
             resultsFile: 'sfca_results.json'
         })
 
-        expect(dependencies.setOutputCallHistory).toHaveLength(7)
+        expect(dependencies.setOutputCallHistory).toHaveLength(8)
         expect(dependencies.setOutputCallHistory).toContainEqual({
             name: 'exit-code',
             value: '0'
@@ -66,6 +66,10 @@ describe('main run Tests', () => {
             name: 'num-sev5-violations',
             value: '5'
         })
+        expect(dependencies.setOutputCallHistory).toContainEqual({
+            name: 'summary-markdown',
+            value: 'someSummaryMarkdown'
+        })
 
         expect(dependencies.infoCallHistory).toContainEqual({
             infoMessage:
@@ -76,7 +80,8 @@ describe('main run Tests', () => {
                 '  num-sev2-violations: 2\n' +
                 '  num-sev3-violations: 3\n' +
                 '  num-sev4-violations: 4\n' +
-                '  num-sev5-violations: 5'
+                '  num-sev5-violations: 5\n' +
+                '  summary-markdown: someSummaryMarkdown'
         })
 
         expect(summarizer.createSummaryMarkdownCallHistory).toHaveLength(1)
